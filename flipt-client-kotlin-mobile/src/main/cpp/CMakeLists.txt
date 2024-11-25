@@ -3,8 +3,14 @@ project(fliptengine_wrapper VERSION 1.0)
 
 set(CMAKE_BUILD_RPATH "$ORIGIN")
 
+
 add_library( libfliptengine STATIC IMPORTED )
-set_property(TARGET libfliptengine PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libs/libfliptengine.a")
+
+if (${ANDROID_ABI} STREQUAL "arm64-v8a")
+    set_property(TARGET libfliptengine PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/libs/arm64-v8a/libfliptengine.a")
+elseif (${ANDROID_ABI} STREQUAL "x86_64")
+    set_property(TARGET libfliptengine PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/libs/x86_64/libfliptengine.a")
+endif()
 
 add_library(fliptengine_wrapper SHARED fliptengine_wrapper.c)
 target_link_libraries(fliptengine_wrapper PRIVATE libfliptengine)

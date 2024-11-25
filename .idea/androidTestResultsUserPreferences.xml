@@ -48,6 +48,7 @@
               <option name="preferredColumnWidths">
                 <map>
                   <entry key="Duration" value="90" />
+                  <entry key="HMD Global Nokia 5.4" value="120" />
                   <entry key="Medium_Tablet_API_28" value="120" />
                   <entry key="Small_Phone_API_31" value="120" />
                   <entry key="Tests" value="360" />

@@ -16,7 +16,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
         ndk {
-            abiFilters "x86_64"
+//            abiFilters project.hasProperty("abiFilter") ? project.getProperty("abiFilter").split(",") : []
+//            abiFilters "x86_64"
+            abiFilters "arm64-v8a"
+        }
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "x86_64"
+            universalApk false
         }
     }
 
