@@ -16,9 +16,9 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="TestFliptEvaluationClient">
+      <SelectionState runConfigName="MainActivity">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-18T08:11:40.066111342Z">
+        <DropdownSelection timestamp="2024-11-25T08:05:46.931675717Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/home/fachry/.android/avd/Small_Phone_API_31.avd" />
@@ -27,7 +27,13 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="MainActivity">
+      <SelectionState runConfigName="testEvaluateBoolean()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testEvaluateBatch()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="testListFlags()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

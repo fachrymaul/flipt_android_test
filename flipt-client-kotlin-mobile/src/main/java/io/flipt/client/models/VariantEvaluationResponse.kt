@@ -1,15 +1,16 @@
 package io.flipt.client.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VariantEvaluationResponse(
-    val match: Boolean,
-    val segmentKeys: List<String>,
-    val reason: String,
-    val flagKey: String,
-    val variantKey: String,
-    val variantAttachment: String,
-    val requestDurationMillis: Float,
-    val timestamp: String) {
-}
+    @SerialName("match")val match: Boolean? = null,
+    @SerialName("segment_keys")val segmentKeys: List<String>? = null,
+    @SerialName("reason")val reason: String? = null,
+    @SerialName("flag_key")val flagKey: String? = null,
+    @SerialName("variant_key")val variantKey: String? = null,
+    @SerialName("variant_attachment")val variantAttachment: String? = null,
+    @SerialName("request_duration_millis")val requestDurationMillis: Float? = null,
+    @SerialName("timestamp")val timestamp: String? = null
+)

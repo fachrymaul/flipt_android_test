@@ -14,16 +14,14 @@ class TestFliptEvaluationClient {
     @Before
     @Throws(Exception::class)
     fun initAll() {
-//        val fliptURL = System.getenv()["FLIPT_URL"]
-//        val clientToken = System.getenv()["FLIPT_AUTH_TOKEN"]
-        val fliptURL = "https://ff-stgiot.bluebird.id"
+        val fliptURL = "http://10.0.2.2:8080"
         val clientToken = "secret"
 
         assert(fliptURL != null && !fliptURL.isEmpty())
         assert(clientToken != null && !clientToken.isEmpty())
         fliptClient = FliptEvaluationClient.builder()
             .url(url = fliptURL)
-            .namespace("iot")
+            .namespace("default")
             .build()
 //            .authentication(ClientTokenAuthentication(clientToken))
     }
@@ -34,7 +32,7 @@ class TestFliptEvaluationClient {
         val context: MutableMap<String, String> = HashMap()
         context["fizz"] = "buzz"
 
-        val response  = fliptClient?.evaluateVariant("iot-driving-pattern-ff", "entity", context)
+        val response  = fliptClient?.evaluateVariant("flag1", "entity", context)
 
         assert("flag1".equals(response?.flagKey))
         assert(response?.match ?: false)
@@ -91,7 +89,7 @@ class TestFliptEvaluationClient {
         val errorResponse = responses?.get(2)?.errorEvaluationResponse
         assert("notfound".equals(errorResponse?.flagKey))
         assert("default".equals(errorResponse?.namespaceKey))
-        assert("NOTlistFlags_FOUND_ERROR_EVALUATION_REASON".equals(errorResponse?.reason))
+        assert("NOT_FOUND_ERROR_EVALUATION_REASON".equals(errorResponse?.reason))
     }
 
     @Test

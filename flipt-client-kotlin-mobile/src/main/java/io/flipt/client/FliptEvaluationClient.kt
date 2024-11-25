@@ -18,9 +18,12 @@ import kotlin.time.Duration
 
 class FliptEvaluationClient(namespace: String, options: ClientOptions) {
     private var engine: Long = 0
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     init {
-        val clientOptionsSerialized = Json.encodeToString(options)
+        val clientOptionsSerialized = json.encodeToString(options)
         engine = CLibrary.INSTANCE.initializeEngine(namespace, clientOptionsSerialized)
     }
 
@@ -121,46 +124,60 @@ class FliptEvaluationClient(namespace: String, options: ClientOptions) {
     }
 
 
-
     @Serializable
     data class InternalEvaluationRequest(
-       @SerialName("flag_key") val flagKey: String,
-       @SerialName("entity_id") val entityId: String,
-       @SerialName("context") val context: Map<String, String>
+        @SerialName("flag_key") val flagKey: String,
+        @SerialName("entity_id") val entityId: String,
+        @SerialName("context") val context: Map<String, String>
     )
 
     fun evaluateVariant(
         flagKey: String,
         entityId: String,
         context: Map<String, String>
-    ): VariantEvaluationResponse {
+    ): VariantEvaluationResponse? {
         val evaluationRequest = InternalEvaluationRequest(flagKey, entityId, context)
-        val evaluationRequestSerialized = Json.encodeToString(evaluationRequest)
+        val evaluationRequestSerialized = json.encodeToString(evaluationRequest)
 
         val value = CLibrary.INSTANCE.evaluateVariant(engine, evaluationRequestSerialized)
 
-        return Json.decodeFromString(VariantEvaluationResponse.serializer(), value)
+        val resp: Result<VariantEvaluationResponse> =
+            json.decodeFromString(Result.serializer(VariantEvaluationResponse.serializer()), value)
+
+        return resp.result
     }
 
-    fun evaluateBoolean(flagKey: String, entityId: String, context: Map<String, String>): BooleanEvaluationResponse {
+    fun evaluateBoolean(
+        flagKey: String,
+        entityId: String,
+        context: Map<String, String>
+    ): BooleanEvaluationResponse? {
         val evaluationRequest = InternalEvaluationRequest(flagKey, entityId, context)
-        val evaluationRequestSerialized = Json.encodeToString(evaluationRequest)
+        val evaluationRequestSerialized = json.encodeToString(evaluationRequest)
 
         val value = CLibrary.INSTANCE.evaluateBoolean(engine, evaluationRequestSerialized)
 
-        return Json.decodeFromString(BooleanEvaluationResponse.serializer(), value)
+        val respond: Result<BooleanEvaluationResponse> =
+            json.decodeFromString(Result.serializer(BooleanEvaluationResponse.serializer()), value)
+        return respond.result
     }
 
-    fun evaluateBatch(batchEvaluationRequest: Array<EvaluationRequest>): BatchEvaluationResponse {
+    fun evaluateBatch(batchEvaluationRequest: Array<EvaluationRequest>): BatchEvaluationResponse? {
         val evaluationrequests = mutableListOf<InternalEvaluationRequest>()
 
         batchEvaluationRequest.map {
             evaluationrequests.add(InternalEvaluationRequest(it.flagKey, it.entityId, it.context))
         }
 
-        val batchEvaluationRequestSerialized = Json.encodeToString(evaluationrequests)
+        val batchEvaluationRequestSerialized = json.encodeToString(evaluationrequests)
+        val value = CLibrary.INSTANCE.evaluateBatch(engine, batchEvaluationRequestSerialized)
 
-        return Json.decodeFromString(BatchEvaluationResponse.serializer(), CLibrary.INSTANCE.evaluateBatch(engine, batchEvaluationRequestSerialized))
+        val response: Result<BatchEvaluationResponse> = json.decodeFromString(
+            Result.serializer(BatchEvaluationResponse.serializer()),
+            value
+        )
+
+        return response.result
     }
 
     fun listFlags(): ArrayList<Flag>? {
@@ -171,11 +188,9 @@ class FliptEvaluationClient(namespace: String, options: ClientOptions) {
 
     fun readFlags(ptr: String): Result<ArrayList<Flag>>? {
         try {
-            return Json.decodeFromString<Result<ArrayList<Flag>>>(ptr)
+            return json.decodeFromString<Result<ArrayList<Flag>>>(ptr)
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
-            CLibrary.INSTANCE.destroyString(ptr)
         }
 
         return null
@@ -185,7 +200,7 @@ class FliptEvaluationClient(namespace: String, options: ClientOptions) {
         CLibrary.INSTANCE.destroyEngine(engine)
     }
 
-    companion object{
+    companion object {
         fun builder(): FliptEvaluationClientBuilder {
             return FliptEvaluationClientBuilder()
         }

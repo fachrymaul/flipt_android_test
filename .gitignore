@@ -19,4 +19,5 @@ local.properties
 *.tar.gz
 *.rlib
 *.d
-
+*.x86_64
+*.aarch64
